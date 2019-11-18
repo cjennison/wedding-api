@@ -1,0 +1,17 @@
+{
+  "name": "wedding-api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "knex": "^0.20.2",
+    "lodash": "^4.17.15",
+    "morgan": "~1.9.1",
+    "pg": "^7.12.1"
+  }
+}
