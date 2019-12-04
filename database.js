@@ -5,7 +5,7 @@ let connection = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  connection = process.env.PSQL_URL
+  connection = process.env.DATABASE_URL
 }
 
 const knex = require('knex')({
