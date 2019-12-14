@@ -39,6 +39,18 @@ router.get('/attendees/:id/confirm', async function(req, res, next) {
   res.send(true)
 });
 
+router.get('/rsvps/:email', async function(req, res, next) {
+  let rsvp = await db.from('rsvps').select('*').where({ email: req.params.email })
+  rsvp = rsvp[0]
+
+  const attendees = await db('attendees').select('*').where('rsvp_id', rsvp.id)
+
+  res.send({
+    rsvp,
+    attendees,
+  })
+});
+
 router.get('/rsvps', function(req, res, next) {
   const secret = req.body.secret
   if (secret !== ADMIN_SECRET) return res.sendStatus(403)
