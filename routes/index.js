@@ -53,6 +53,13 @@ router.get('/rsvps/:email', async function(req, res, next) {
   let rsvp = await db.from('rsvps').select('*').where({ email: req.params.email })
   rsvp = rsvp[0]
 
+  if (!rsvp) {
+    res.send({
+      rsvp: null,
+      attendees: [],
+    })
+  }
+
   const attendees = await db('attendees').select('*').where('rsvp_id', rsvp.id)
 
   res.send({
