@@ -10,8 +10,12 @@ const ADMIN_SECRET = process.env.NODE_ENV === 'production' ? process.env.ADMIN_S
 const db = require('../database')
 
 router.get('/attendees', function(req, res, next) {
-  const secret = req.body.secret
-  if (secret !== ADMIN_SECRET) return res.sendStatus(403)
+  const token = req.headers.authorization
+  const baseHash = crypto.createHash('md5').update(`${hashSessionSalt}${ADMIN_SECRET}`).digest('hex')
+
+  if (token !== baseHash) {
+    return res.sendStatus(403)
+  }
 
   db.from('attendees').select('*').then((list) => {
     res.send(list)
@@ -19,7 +23,7 @@ router.get('/attendees', function(req, res, next) {
 });
 
 router.get('/attendees/check-confirmed', function(req, res, next) {
-  const secret = req.body.secret
+  const secret = req.headers.authorization
   if (secret !== ADMIN_SECRET) return res.sendStatus(403)
 
   db.from('attendees').select('*').where({
@@ -33,9 +37,13 @@ router.get('/attendees/check-confirmed', function(req, res, next) {
   })
 });
 
-router.get('/attendees/:id/confirm', async function(req, res, next) {
-  const secret = req.body.secret
-  if (secret !== ADMIN_SECRET) return res.sendStatus(403)
+router.post('/attendees/:id/confirm', async function(req, res, next) {
+  const token = req.headers.authorization
+  const baseHash = crypto.createHash('md5').update(`${hashSessionSalt}${ADMIN_SECRET}`).digest('hex')
+
+  if (token !== baseHash) {
+    return res.sendStatus(403)
+  }
 
   await db('attendees').where('id', req.params.id).update({ confirmed: req.body.confirmed })
   res.send(true)
@@ -54,8 +62,12 @@ router.get('/rsvps/:email', async function(req, res, next) {
 });
 
 router.get('/rsvps', function(req, res, next) {
-  const secret = req.body.secret
-  if (secret !== ADMIN_SECRET) return res.sendStatus(403)
+  const token = req.headers.authorization
+  const baseHash = crypto.createHash('md5').update(`${hashSessionSalt}${ADMIN_SECRET}`).digest('hex')
+
+  if (token !== baseHash) {
+    return res.sendStatus(403)
+  }
 
   db.from('rsvps').select('*').then((list) => {
     res.send(list)
